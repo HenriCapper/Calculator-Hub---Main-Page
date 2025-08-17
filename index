@@ -1,0 +1,661 @@
+<body>
+
+
+  <meta charset="utf-8">
+  <title>Opus Hardware – Glass Calculator Hub</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  
+  <style>
+    :root {
+      --bg: #fcfcf8;
+      --card: #fff;
+      --text: #222;
+      --primary: #111;
+      --accent: #0077c8;
+      --border: #eaeaea;
+      --radius: 12px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    * { box-sizing: border-box }
+    
+    /* Hide Shopify page title */
+    .page-title,
+    .shopify-section .page-title,
+    h1.page-title,
+    .page-header .page-title {
+      display: none !important;
+    }
+    
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1rem 2rem;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary) 0%, #333 100%);
+      color: white;
+      padding: 2.5rem 2rem 3.5rem;
+      margin: 0 -1rem 2rem -1rem;
+      border-radius: 0 0 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+      opacity: 0.3;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      width: 100%;
+    }
+
+    .logo {
+      width: 220px;
+      height: auto;
+      margin: 0 auto 0.5rem auto;
+      filter: brightness(0) invert(1);
+      transition: transform 0.3s ease;
+      display: block;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: white;
+      margin: 0 0 1rem;
+      letter-spacing: -0.03em;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .subtitle {
+      font-size: 1.3rem;
+      color: rgba(255,255,255,0.9);
+      margin: 0;
+      font-weight: 300;
+      line-height: 1.4;
+    }
+
+    .step-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 3rem 2.5rem 3.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), #0099e6);
+    }
+
+    .step-title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 0 0 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .step-number {
+      background: linear-gradient(135deg, var(--accent), #0099e6);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0, 119, 200, 0.3);
+    }
+
+    .system-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 1rem;
+      max-width: none;
+    }
+
+    .system-card {
+      background: #fafafa;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .system-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .system-card.selected {
+      border-color: var(--accent);
+      background: rgba(0, 119, 200, 0.05);
+      box-shadow: 0 0 0 2px rgba(0, 119, 200, 0.2);
+    }
+
+    .system-icon {
+      width: 70px;
+      height: 70px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.6rem;
+      color: white;
+      font-weight: 600;
+    }
+
+    .system-showcase {
+      width: 250px;
+      height: 160px;
+      margin: 0 auto 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      background: white;
+      border-radius: 14px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .showcase-product {
+      flex: 1;
+      height: 100%;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border-radius: 10px;
+    }
+
+    .system-name {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 0 0 0.8rem;
+    }
+
+    .system-description {
+      font-size: 1rem;
+      color: #666;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .calculator-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    .calculator-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+      display: block;
+    }
+
+    .calculator-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .system-card[data-system="post"] {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .system-card[data-system="post"]:hover {
+      transform: none;
+      border-color: var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .calculator-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 0 0 0.5rem;
+    }
+
+    .calculator-description {
+      font-size: 0.95rem;
+      color: #666;
+      margin: 0 0 1rem;
+    }
+
+    .calculator-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--accent);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .back-button {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      transition: background 0.2s;
+    }
+
+    .back-button:hover {
+      background: #565e64;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0.5rem 0.5rem 1rem;
+      }
+
+      .header {
+        padding: 2rem 1rem 2.5rem;
+        margin: 0 -0.5rem 1.5rem -0.5rem;
+        text-align: center;
+      }
+
+      .header-content {
+        text-align: center;
+      }
+
+      .logo {
+        width: 180px;
+        margin: 0 auto 0.5rem auto;
+        display: block;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .system-grid,
+      .calculator-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .step-card {
+        padding: 2rem 1.5rem 2.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .system-card {
+        padding: 2rem 1.5rem;
+        min-height: 180px;
+      }
+    }
+
+    @media (min-width: 1600px) {
+      .container {
+        max-width: 1600px;
+        padding: 0 2rem 2rem;
+      }
+      
+      .system-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .calculator-grid {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      }
+    }
+  </style>
+
+
+
+  <div class="container">
+    <div class="header">
+      <div class="header-content">
+        <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/Opus_Logo_FINAL_2024.svg?v=1747958195" alt="Opus Hardware Logo" class="logo">
+        <h1>Glass Calculator Hub</h1>
+        <p class="subtitle">Choose your glass fixing system to access the right calculator</p>
+      </div>
+    </div>
+
+    <!-- Step 1: Choose System Type -->
+    <div id="step1" class="step-card">
+      <h2 class="step-title">
+        <span class="step-number">1</span>
+        Choose Your System Type
+      </h2>
+      
+      <div class="system-grid">
+        <div class="system-card" data-system="channel">
+          <div class="system-showcase">
+            <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/Channel_Thumbnail.png?v=1753411168" alt="Channel Systems" style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px;">
+          </div>
+          <h3 class="system-name">Channel Systems</h3>
+          <p class="system-description">Structural glazing with aluminum channels</p>
+        </div>
+
+        <div class="system-card" data-system="spigot">
+          <div class="system-showcase">
+            <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/Spigots_Thumbnail.png?v=1753410630" alt="Spigots &amp; MiniPosts" style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px;">
+          </div>
+          <h3 class="system-name">Spigots &amp; MiniPosts</h3>
+          <p class="system-description">Post-mounted glass panels with spigots and mini posts</p>
+        </div>
+
+        <div class="system-card" data-system="pointfix">
+          <div class="system-showcase">
+            <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/Standoffs_thumbnail.png?v=1753409120" alt="Point Fix Systems" style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px;">
+          </div>
+          <h3 class="system-name">Point Fix Systems</h3>
+          <p class="system-description">Point-fixed glazing with disc and plate connectors</p>
+        </div>
+
+        <div class="system-card" data-system="post">
+          <div class="system-showcase">
+            <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/Post_Systems_Thumbnail.png?v=1753409120" alt="Post Systems" style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px;">
+          </div>
+          <h3 class="system-name">Post Systems</h3>
+          <p class="system-description">Coming Soon - Resolute and Vortex post systems</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Choose Specific Calculator -->
+    <div id="step2" class="step-card hidden">
+      <button class="back-button" onclick="goBack()">← Back to System Types</button>
+      
+      <h2 class="step-title">
+        <span class="step-number">2</span>
+        Choose Your Calculator
+      </h2>
+
+      <!-- Channel Calculators -->
+      <div id="channel-calculators" class="calculator-grid hidden">
+        <a href="https://opushardware.com/pages/copy-of-smart-lock-channel-top-fix-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/Smart_Lock_22_2.png?v=1732734485" alt="Smart Lock Top Fix" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">Smart Lock Top Fix</h3>
+          <p class="calculator-description">Top-mounted channel system with smart locking mechanism</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+
+        <a href="https://opushardware.com/pages/smart-lock-channel-side-fix-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/Smart_Lock_22_2.png?v=1732734485" alt="Smart Lock Side Fix" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">Smart Lock Side Fix</h3>
+          <p class="calculator-description">Side-mounted channel system with smart locking mechanism</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+
+        <a href="https://opushardware.com/pages/lugano-channel-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/Lugano_Channel_Thumbnail.png?v=1753411651" alt="Lugano" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">Lugano Channel</h3>
+          <p class="calculator-description">Premium channel system for structural glazing applications</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+
+        <a href="https://opushardware.com/pages/vista-channel-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/Vista_Channel_Thumbnail.png?v=1753411651" alt="Vista" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">Vista Channel</h3>
+          <p class="calculator-description">Advanced channel system for enhanced performance</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+      </div>
+
+      <!-- Point Fix Calculators -->
+      <div id="pointfix-calculators" class="calculator-grid hidden">
+        <a href="https://opushardware.com/pages/sd50-doubledisc-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/SD50-BH-SS.jpg?v=1742158383" alt="SD50 Double Disc" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">SD50 Double Disc</h3>
+          <p class="calculator-description">Heavy-duty double disc system for demanding applications</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+
+        <a href="https://opushardware.com/pages/pf150-platefix-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/PF150R-SS.png?v=1747697271" alt="PF150 Plate Fix" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">PF150 Plate Fix</h3>
+          <p class="calculator-description">Point-fixed glazing system with 150mm plate connectors</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+
+        <a href="https://opushardware.com/pages/sd75-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/SD75-SS.jpg?v=1746053281" alt="SD75 Single Disc" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">SD75 Single Disc</h3>
+          <p class="calculator-description">Mid-range single disc system for structural glazing</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+
+        <a href="https://opushardware.com/pages/sd100-calcualtor" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/SD100-SS.jpg?v=1746053334" alt="SD100 Single Disc" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">SD100 Single Disc</h3>
+          <p class="calculator-description">Heavy-duty single disc system for demanding applications</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+
+        <a href="https://opushardware.com/pages/pradis-clamp-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/EZ1-Sa.png?v=1748205814" alt="Pradis Clamps" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">Pradis Clamps</h3>
+          <p class="calculator-description">Advanced clamping system for structural glazing</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+      </div>
+
+      <!-- Spigot Calculators -->
+      <div id="spigot-calculators" class="calculator-grid hidden">
+        <a href="https://opushardware.com/pages/sp10-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/SP15-SS.jpg?v=1745876540" alt="SP10" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">SP10</h3>
+          <p class="calculator-description">Cost‑effective compact spigot system for lighter glazing applications</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+
+        <a href="https://opushardware.com/pages/glass-fencing-calculator-sp12" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/SP12-SS.jpg?v=1745466255" alt="SP12" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">SP12 Spigot</h3>
+          <p class="calculator-description">Our strongest spigot system, providing superior strength and stability</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+
+        <a href="https://opushardware.com/pages/sp13-spigot-post-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/SP13-SS.jpg?v=1745468390" alt="SP13" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">SP13 Spigot</h3>
+          <p class="calculator-description">Enhanced spigot system with improved structural performance</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+
+        <a href="https://opushardware.com/pages/copy-of-sp14-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/SP14-SS.jpg?v=1745468490" alt="SP14" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">SP14</h3>
+          <p class="calculator-description">Advanced spigot system for demanding applications</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+
+        <a href="https://opushardware.com/pages/sp15-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/SP15-SS.jpg?v=1745876540" alt="SP15" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">SP15</h3>
+          <p class="calculator-description">Heavy-duty spigot system for 15mm+ glass applications</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+
+        <a href="https://opushardware.com/pages/rmp160-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/RMP160-SS.jpg?v=1745877475" alt="RMP160" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">RMP160</h3>
+          <p class="calculator-description">Cost‑effective rectangular mini post system for structural glazing</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+
+        <a href="https://opushardware.com/pages/smp160-calculator" class="calculator-card">
+          <img src="https://cdn.shopify.com/s/files/1/0663/2738/0132/files/SMP160-SS.jpg?v=1745878155" alt="SMP160" style="width: 100%; height: 150px; object-fit: contain; margin-bottom: 1rem; border-radius: 8px;">
+          <h3 class="calculator-title">SMP160</h3>
+          <p class="calculator-description">Cost‑effective square mini post system for structural glazing</p>
+          <span class="calculator-link">Open Calculator →</span>
+        </a>
+      </div>
+
+      <!-- Post Systems -->
+      <div id="post-calculators" class="calculator-grid hidden">
+        <div class="calculator-card" style="opacity: 0.6; cursor: default;">
+          <div style="width: 100%; height: 150px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; color: #999; font-size: 2rem; font-weight: 600;">
+            RESOLUTE
+          </div>
+          <h3 class="calculator-title">Resolute Post <span style="font-size: 0.8rem; color: #666;">(Coming Soon)</span>
+</h3>
+          <p class="calculator-description">Premium post system for structural glazing applications</p>
+          <span class="calculator-link">Coming Soon</span>
+        </div>
+
+        <div class="calculator-card" style="opacity: 0.6; cursor: default;">
+          <div style="width: 100%; height: 150px; background: #f5f5f5; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; color: #999; font-size: 2rem; font-weight: 600;">
+            VORTEX
+          </div>
+          <h3 class="calculator-title">Vortex Post <span style="font-size: 0.8rem; color: #666;">(Coming Soon)</span>
+</h3>
+          <p class="calculator-description">Advanced post system for demanding structural applications</p>
+          <span class="calculator-link">Coming Soon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedSystem = null;
+
+    // Handle system selection
+    document.querySelectorAll('.system-card').forEach(card => {
+      card.addEventListener('click', function() {
+        // Skip if it's the post system (coming soon)
+        if (this.dataset.system === 'post') {
+          return;
+        }
+        
+        // Remove previous selection
+        document.querySelectorAll('.system-card').forEach(c => c.classList.remove('selected'));
+        
+        // Select current card
+        this.classList.add('selected');
+        selectedSystem = this.dataset.system;
+        
+        // Show step 2 after a brief delay
+        setTimeout(() => {
+          showStep2();
+        }, 300);
+      });
+    });
+
+    function showStep2() {
+      document.getElementById('step2').classList.remove('hidden');
+      
+      // Hide all calculator groups
+      document.querySelectorAll('[id$="-calculators"]').forEach(group => {
+        group.classList.add('hidden');
+      });
+      
+      // Show the selected system's calculators
+      const calculatorGroup = document.getElementById(selectedSystem + '-calculators');
+      if (calculatorGroup) {
+        calculatorGroup.classList.remove('hidden');
+      }
+      
+      // Scroll to step 2
+      document.getElementById('step2').scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start' 
+      });
+    }
+
+    function goBack() {
+      // Hide step 2
+      document.getElementById('step2').classList.add('hidden');
+      
+      // Clear selection
+      document.querySelectorAll('.system-card').forEach(c => c.classList.remove('selected'));
+      selectedSystem = null;
+      
+      // Scroll back to step 1
+      document.getElementById('step1').scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start' 
+      });
+    }
+
+    // Add some hover effects and animations
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animate cards on load
+      const cards = document.querySelectorAll('.system-card');
+      cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          card.style.transition = 'all 0.4s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, index * 100);
+      });
+    });
+  </script>
+
+
+</body>
